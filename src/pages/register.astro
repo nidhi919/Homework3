@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro'
+import '../styles/register.css'
+import { app } from '../firebase/server'
+import { getAuth } from 'firebase-admin/auth'
+import '../styles/App.css'
+const auth = getAuth(app)
+
+// TODO Check if the user has an active session
+// If the session is verified, redirect the user to the dashboard
+// HINT: See index.astro for a reference on how to do this
+// Your code here
+---
+
+<Layout title="Register">
+    <body>
+        <div class="create-user">
+            <form action="/api/auth/register" method="post" class="signup-form">
+                <header class="form-title">Create a New User</header>
+                <label for="name">Name</label>
+                <input
+                    id="name"
+                    name="name"
+                    class="form-control"
+                    placeholder="Enter First Name"
+                />
+                <label for="email">Email</label>
+                <input
+                    id="email"
+                    name="email"
+                    class="form-control"
+                    placeholder="Enter Email ID"
+                />
+                <label for="password">Password</label>
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    class="form-control"
+                    placeholder="Enter Password"
+                />
+                <button
+                    id="createUserButton"
+                    type="submit"
+                    class="btn btn-primary"
+                    style="margin-top: 10px"
+                >
+                    Submit
+                </button>
+                <a href="/signin" class="btn btn-primary">Go to Login</a>
+                <div class="hidden-info">
+                    <p id="msg-for-failure-sucess"></p>
+                </div>
+            </form>
+        </div>
+    </body>
+</Layout>
