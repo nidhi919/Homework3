@@ -12,7 +12,6 @@ import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import firebaseConfig from './client-credentials.json' with { type: 'json' }
 //import firebaseConfig from './client-credentials.js'
 
-
 config()
 
 // Initialize Firebase
