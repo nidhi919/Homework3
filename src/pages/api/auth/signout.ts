@@ -4,5 +4,14 @@ import type { APIRoute } from 'astro'
 // The function should delete the session cookie and navigate to the signin page
 export const GET: APIRoute = async ({ redirect, cookies }) => {
     // Your code here
-    return redirect('/signin')
+
+    cookies.set('session', '', {
+        path: '/',
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        maxAge: 0 // expires the cookie immediately
+    });
+
+    return redirect('/signin');
 }

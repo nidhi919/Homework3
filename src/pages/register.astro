@@ -4,12 +4,30 @@ import '../styles/register.css'
 import { app } from '../firebase/server'
 import { getAuth } from 'firebase-admin/auth'
 import '../styles/App.css'
+//import type { Request, Response } from 'express';
 const auth = getAuth(app)
 
 // TODO Check if the user has an active session
 // If the session is verified, redirect the user to the dashboard
 // HINT: See index.astro for a reference on how to do this
 // Your code here
+
+// Check if the user has an active session and redirect if authenticated
+async function checkSession() {
+    try {
+        const sessionCookie = Astro.cookies.get('session')?.value || ''; // Retrieve session cookie value
+        const decodedClaims = await auth.verifySessionCookie(sessionCookie, true); // Verify session
+        if (decodedClaims) {
+            return Astro.redirect('/dashboard'); // Redirect if session is active
+        }
+    } catch (error) {
+        console.error('Session not active:', error); // Log any errors (optional)
+    }
+}
+
+// Invoke checkSession immediately
+await checkSession();
+
 ---
 
 <Layout title="Register">
@@ -54,4 +72,50 @@ const auth = getAuth(app)
             </form>
         </div>
     </body>
+
+    <script>
+        const formElement = document.getElementById('registerForm') as HTMLFormElement | null;
+    
+        if (formElement) { // Ensure the form element is not null
+            formElement.addEventListener('submit', async function (event) {
+                event.preventDefault(); // Prevent default form submission
+                const formData = new FormData(formElement); // Use formElement directly
+                const data = {
+                    email: formData.get('email'),
+                    password: formData.get('password'),
+                    name: formData.get('name'),
+                };
+    
+                try {
+                    const response = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json', // Set the content type
+                        },
+                        body: JSON.stringify(data), // Convert the data to JSON
+                    });
+    
+                    if (!response.ok) {
+                        const errorText = await response.text(); // Get error message
+                        throw new Error(errorText);
+                    }
+    
+                    console.log('User registered successfully!');
+                    // Redirect or perform further actions as needed
+                } catch (error: unknown) {
+                    // Type check for error to access the message safely
+                    if (error instanceof Error) {
+                        console.error('Error during registration:', error.message);
+                        alert(error.message); // Display the error to the user
+                    } else {
+                        console.error('Unknown error during registration:', error);
+                        alert('An unknown error occurred.'); // Display a generic error message
+                    }
+                }
+            });
+        } else {
+            console.error('Form element with id "registerForm" not found.');
+        }
+    </script>
+
 </Layout>

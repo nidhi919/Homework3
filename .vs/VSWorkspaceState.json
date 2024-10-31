@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\public",
+    "\\src",
+    "\\src\\components",
+    "\\src\\pages",
+    "\\__tests__"
+  ],
+  "SelectedNode": "\\src\\pages\\register.astro",
+  "PreviewInSolutionExplorer": false
+}

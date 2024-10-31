@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ProductList from './ProductList'
 import ProductForm from './ProductForm'
 import Search from './Search'
@@ -16,24 +16,65 @@ function App() {
     const [totalPages, setTotalPages] = useState(1)
     const [showForm, setShowForm] = useState<'none' | 'add' | 'delete'>('none')
 
-    const loadProducts = async (query = '') => {
-        try {
-            const response = await fetchProducts(query)
-            setProducts(response.products)
-            setTotalPages(response.totalPages)
-        } catch (error) {
-            console.error('Error fetching products:', error)
-            setStatus('Failed to load products')
-        }
-    }
-    useEffect(() => {
-        // Load every product on initial render
-        loadProducts()
-    }, [])
+    // const loadProducts = async (query = '') => {
+    //     try {
+    //         const response = await fetchProducts(query)
+    //         console.log('response', response);
+    //         setProducts(response.products)
+    //         setTotalPages(response.totalPages)
+    //     } catch (error) {
+    //         console.error('Error fetching products:', error)
+    //         setStatus('Failed to load products')
+    //     }
+    // }
 
-    useEffect(() => {
-        loadProducts(query)
-    }, [query])
+
+    //BEST VERSION
+    // const loadProducts = async (query = '', page = currentPage) => {
+    //     try {
+    //         const response = await fetchProducts(query, page); // Pass current page to fetchProducts
+    //         console.log('response', response);
+    //         setProducts(response.products);
+    //         setTotalPages(response.totalPages);
+    //     } catch (error) {
+    //         console.error('Error fetching products:', error);
+    //         setStatus('Failed to load products');
+    //     }
+    // };
+
+
+    // Define loadProducts with useCallback
+const loadProducts = useCallback(async (query = '', page = currentPage) => {
+    try {
+        const response = await fetchProducts(query, page);
+        console.log('response', response);
+        setProducts(response.products);
+        setTotalPages(response.totalPages);
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        setStatus('Failed to load products');
+    }
+}, [currentPage]); // Add currentPage to dependencies
+
+    // // Load products when the component mounts or when the query changes
+    // useEffect(() => {
+    //     loadProducts(query, currentPage); // Add currentPage as a parameter
+    // }, [query, currentPage]); // Update dependency array to include currentPage
+
+//BEST AS WELL
+    // Load products when the component mounts or when the query changes
+useEffect(() => {
+    loadProducts(query, currentPage); // Call with the current query and page
+}, [loadProducts, query, currentPage]);
+
+    // useEffect(() => {
+    //     // Load every product on initial render
+    //     loadProducts()
+    // }, [])
+
+    // useEffect(() => {
+    //     loadProducts(query)
+    // }, [query])
 
     return (
         <div>

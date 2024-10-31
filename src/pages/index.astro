@@ -5,11 +5,12 @@ import { app } from '../firebase/server'
 const auth = getAuth(app)
 // Get session cookie
 const sessionCookie = Astro.cookies.get('session')?.value
+let decodedCookie;
 
 if (sessionCookie) {
     try {
         // Verify session cookie
-        const decodedCookie = await auth.verifySessionCookie(sessionCookie)
+        decodedCookie = await auth.verifySessionCookie(sessionCookie)
         // If valid, redirect to dashboard
         if (decodedCookie) return Astro.redirect('/dashboard')
     } catch (error) {

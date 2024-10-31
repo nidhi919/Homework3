@@ -13,8 +13,12 @@ export const GET: APIRoute = async ({ request, cookies, redirect }) => {
     // TODO Verify that the token is valid using Firebase auth API. If it isn't, return a 401 status
     try {
         //
+        await auth.verifyIdToken(idToken);  // Verifies the ID token
+
     } catch (error) {
         //
+        console.error('Invalid token:', error);
+        return new Response('Unauthorized', { status: 401 });
     }
     /* Create and set session cookie */
     const fiveDays = 60 * 60 * 24 * 5 * 1000
@@ -23,6 +27,9 @@ export const GET: APIRoute = async ({ request, cookies, redirect }) => {
     })
     cookies.set('session', sessionCookie, {
         path: '/',
-    })
-    return redirect('/dashboard')
-}
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+    });
+    return redirect('/dashboard');
+};

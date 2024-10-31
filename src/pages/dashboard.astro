@@ -3,6 +3,13 @@ import { app } from '../firebase/server'
 import { getAuth } from 'firebase-admin/auth'
 import Layout from '../layouts/Layout.astro'
 import App from '../components/App'
+import type { UserRecord } from 'firebase-admin/auth'; // Import UserRecord type
+import type { APIRoute } from 'astro'; // Import type for API route
+
+
+// Define a type for the possible return value
+type SessionCheckResult = UserRecord | { redirect: string };
+//import { redirect } from 'astro'; // Import redirect function for redirection
 const auth = getAuth(app)
 
 // TODO Check if the user has an active session
@@ -10,15 +17,61 @@ const auth = getAuth(app)
 // If not, redirect the user to the signin page
 // Your code here
 
+
 // TODO Retrieve the session cookie and verify it
 // Use Firebase verifySessionCookie method to verify the session cookie
 // Your code here
 
 // Get the user details from the decoded cookie
-const user = await auth.getUser(decodedCookie.uid)
+//const user = await auth.getUser(decodedCookie.uid)
 
 // TODO If the user is not found, redirect the user to the signin page
 // Your code here
+
+// Define a function to check user session
+const checkUserSession = async (request: Request) => { 
+    // Access cookies from Astro's request context
+    const sessionCookie = request.headers.get('cookie')?.split('; ').find(row => row.startsWith('session='))?.split('=')[1];
+
+    if (!sessionCookie) {
+        // Redirect to signin if no session cookie found
+        return { redirect: '/signin' };
+    }
+
+    try {
+        // Verify the session cookie
+        const decodedCookie = await auth.verifySessionCookie(sessionCookie, true /** checkRevoked */);
+
+        // Get the user details from the decoded cookie
+        const user = await auth.getUser(decodedCookie.uid);
+
+        if (!user) {
+            // Redirect to signin if user is not found
+            return { redirect: '/signin' };
+        }
+
+        return user; // Return the user object for further use if needed
+    } catch (error) {
+        console.error('Error verifying session cookie:', error);
+        return { redirect: '/signin' }; // Redirect to signin on any error
+    }
+};
+
+// Call the session check in an async context
+const userSessionResult = await checkUserSession(Astro.request); // Pass the Astro.request object
+
+// Check for redirect condition
+if ('redirect' in userSessionResult) {
+    return {
+        status: 302,
+        headers: {
+            Location: userSessionResult.redirect,
+        },
+    };
+}
+
+const user: UserRecord = userSessionResult; // Assign user if no redirect
+
 ---
 
 <Layout title="dashboard">

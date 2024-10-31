@@ -9,6 +9,42 @@ import '../styles/App.css'
 // HINT: See index.astro for a reference on how to do this
 const auth = getAuth(app)
 // Your code here
+
+// Get the request object from the function parameters
+//const { request } = Astro;
+
+//const sessionCookie = Astro.request.cookies.get('session')?.value; // Retrieve session cookie from request
+
+
+// Access the cookies from the Astro.request object
+const sessionCookie = Astro.request.headers.get('cookie')
+    ?.split('; ')
+    .find(cookie => cookie.startsWith('session='))
+    ?.split('=')[1]; // Retrieve session cookie value
+
+let userSessionResult;
+let decodedCookie;
+
+
+if (sessionCookie) {
+    try {
+        decodedCookie = await auth.verifySessionCookie(sessionCookie, true);
+        userSessionResult = await auth.getUser(decodedCookie.uid);
+    } catch (error) {
+        console.error("Error verifying session:", error);
+    }
+}
+
+// If user session exists, redirect to the dashboard
+if (userSessionResult) {
+    return {
+        status: 302,
+        headers: {
+            Location: '/dashboard',
+        },
+    };
+}
+
 ---
 
 <Layout title="Sign in">
