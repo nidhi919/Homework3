@@ -20,9 +20,7 @@ export const POST: APIRoute = async ({ request }) => {
         return new Response('Invalid content type. Expected application/json or application/x-www-form-urlencoded', { status: 400 });
     }
 
-    let email: string | undefined;
-    let password: string | undefined;
-    let name: string | undefined;
+   
 
     let data: { email?: string; password?: string; name?: string } = {};
 
@@ -39,9 +37,13 @@ export const POST: APIRoute = async ({ request }) => {
         }
     }
 
-    email = data.email;
-    password = data.password;
-    name = data.name;
+    const email: string | undefined = data.email;
+    const password: string | undefined = data.password;
+    const name: string | undefined = data.name;
+
+    // email = data.email;
+    // password = data.password;
+    // name = data.name;
 
     if (!email || !password || !name) {
         return new Response('All fields are required.', { status: 400 });
@@ -55,7 +57,7 @@ export const POST: APIRoute = async ({ request }) => {
         });
 
         console.log('Successfully created new user:', userRecord.uid);
-        return Response.redirect('/signin', 303); 
+        //return Response.redirect('/signin', 303); 
         return new Response(JSON.stringify({ message: 'User created successfully!' }), {
             status: 201,
             headers: { 'Content-Type': 'application/json' },
@@ -73,6 +75,7 @@ export const POST: APIRoute = async ({ request }) => {
             });
         }
     }
+    
     
 };
 

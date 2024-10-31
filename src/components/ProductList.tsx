@@ -13,7 +13,7 @@ interface ProductListProps {
 const ProductList: React.FC<ProductListProps> = ({
     products,
     currentPage,
-    totalPages,
+    //totalPages,
     setCurrentPage,
 }) => {
     // Calculate the number of products per page
