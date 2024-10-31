@@ -14,7 +14,6 @@
 // import { app } from '../../firebase/client'
 // import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
-
 // const db = getFirestore(app)
 // // Connect to Firestore Emulator
 // if (import.meta.env.PUBLIC_EMULATOR === '1')
@@ -64,7 +63,7 @@
 // export const addProduct = async (product: Omit<Product, 'id'>) => {
 //     // Get a reference to the products collection
 //     const productsRef = collection(db, 'products');
-    
+
 //     // Get all products to find the current maximum ID
 //     const querySnapshot = await getDocs(productsRef);
 //     let maxID = 0;
@@ -105,8 +104,6 @@
 //         throw new Error(`Product with ID ${productId} not found.`);
 //     }
 // };
-
-
 
 //FROM HERE UNCOMMENT IF DOESN'T WORK
 
@@ -216,7 +213,7 @@ export const deleteProduct = async (productId: number) => {
         await deleteDoc(productRef)
         return { id: productId }
     } else {
-        throw new Error(`Product with ID ${productId} not found.`);
+        throw new Error(`Product with ID ${productId} not found.`)
     }
-    return {id: 0}
+    return { id: 0 }
 }

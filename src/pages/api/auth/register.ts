@@ -11,42 +11,45 @@ import { app } from '../../../firebase/server'
 // Verifiy that all three properties are present in the request body, otherwise return a 400 status
 // The POST function should redirect user back to the signin page upon successful creation
 
-
 export const POST: APIRoute = async ({ request }) => {
-    const auth = getAuth(app);
-    const contentType = request.headers.get('content-type');
+    const auth = getAuth(app)
+    const contentType = request.headers.get('content-type')
 
-    if (!contentType?.includes('application/json') && !contentType?.includes('application/x-www-form-urlencoded')) {
-        return new Response('Invalid content type. Expected application/json or application/x-www-form-urlencoded', { status: 400 });
+    if (
+        !contentType?.includes('application/json') &&
+        !contentType?.includes('application/x-www-form-urlencoded')
+    ) {
+        return new Response(
+            'Invalid content type. Expected application/json or application/x-www-form-urlencoded',
+            { status: 400 }
+        )
     }
 
-   
-
-    let data: { email?: string; password?: string; name?: string } = {};
+    let data: { email?: string; password?: string; name?: string } = {}
 
     if (contentType?.includes('application/x-www-form-urlencoded')) {
-        const urlEncodedBody = await request.text();
-        data = Object.fromEntries(new URLSearchParams(urlEncodedBody));
+        const urlEncodedBody = await request.text()
+        data = Object.fromEntries(new URLSearchParams(urlEncodedBody))
     } else {
-        const rawBody = await request.text();
+        const rawBody = await request.text()
         try {
-            data = JSON.parse(rawBody);
+            data = JSON.parse(rawBody)
         } catch (error) {
-            console.error('Error parsing JSON:', error);
-            return new Response('Invalid JSON format.', { status: 400 });
+            console.error('Error parsing JSON:', error)
+            return new Response('Invalid JSON format.', { status: 400 })
         }
     }
 
-    const email: string | undefined = data.email;
-    const password: string | undefined = data.password;
-    const name: string | undefined = data.name;
+    const email: string | undefined = data.email
+    const password: string | undefined = data.password
+    const name: string | undefined = data.name
 
     // email = data.email;
     // password = data.password;
     // name = data.name;
 
     if (!email || !password || !name) {
-        return new Response('All fields are required.', { status: 400 });
+        return new Response('All fields are required.', { status: 400 })
     }
 
     try {
@@ -54,31 +57,34 @@ export const POST: APIRoute = async ({ request }) => {
             email,
             password,
             displayName: name,
-        });
+        })
 
-        console.log('Successfully created new user:', userRecord.uid);
-        //return Response.redirect('/signin', 303); 
-        return new Response(JSON.stringify({ message: 'User created successfully!' }), {
-            status: 201,
-            headers: { 'Content-Type': 'application/json' },
-        });
+        console.log('Successfully created new user:', userRecord.uid)
+        //return Response.redirect('/signin', 303);
+        return new Response(
+            JSON.stringify({ message: 'User created successfully!' }),
+            {
+                status: 201,
+                headers: { 'Content-Type': 'application/json' },
+            }
+        )
     } catch (error: unknown) {
         if (error instanceof Error) {
-            console.error('Error creating user:', error.message);
+            console.error('Error creating user:', error.message)
             return new Response(`Failed to create user: ${error.message}`, {
                 status: 400,
-            });
+            })
         } else {
-            console.error('Unknown error creating user:', error);
-            return new Response('Failed to create user due to an unknown error.', {
-                status: 500,
-            });
+            console.error('Unknown error creating user:', error)
+            return new Response(
+                'Failed to create user due to an unknown error.',
+                {
+                    status: 500,
+                }
+            )
         }
     }
-    
-    
-};
-
+}
 
 // Finalize this POST function to register a new user in the Firebase Authentication service
 // export const POST: APIRoute = async ({ request, redirect }) => {

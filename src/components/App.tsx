@@ -28,7 +28,6 @@ function App() {
     //     }
     // }
 
-
     //BEST VERSION
     // const loadProducts = async (query = '', page = currentPage) => {
     //     try {
@@ -42,30 +41,32 @@ function App() {
     //     }
     // };
 
-
     // Define loadProducts with useCallback
-const loadProducts = useCallback(async (query = '', page = currentPage) => {
-    try {
-        const response = await fetchProducts(query, page);
-        console.log('response', response);
-        setProducts(response.products);
-        setTotalPages(response.totalPages);
-    } catch (error) {
-        console.error('Error fetching products:', error);
-        setStatus('Failed to load products');
-    }
-}, [currentPage]); // Add currentPage to dependencies
+    const loadProducts = useCallback(
+        async (query = '', page = currentPage) => {
+            try {
+                const response = await fetchProducts(query, page)
+                console.log('response', response)
+                setProducts(response.products)
+                setTotalPages(response.totalPages)
+            } catch (error) {
+                console.error('Error fetching products:', error)
+                setStatus('Failed to load products')
+            }
+        },
+        [currentPage]
+    ) // Add currentPage to dependencies
 
     // // Load products when the component mounts or when the query changes
     // useEffect(() => {
     //     loadProducts(query, currentPage); // Add currentPage as a parameter
     // }, [query, currentPage]); // Update dependency array to include currentPage
 
-//BEST AS WELL
+    //BEST AS WELL
     // Load products when the component mounts or when the query changes
-useEffect(() => {
-    loadProducts(query, currentPage); // Call with the current query and page
-}, [loadProducts, query, currentPage]);
+    useEffect(() => {
+        loadProducts(query, currentPage) // Call with the current query and page
+    }, [loadProducts, query, currentPage])
 
     // useEffect(() => {
     //     // Load every product on initial render

@@ -10,8 +10,8 @@ export const GET: APIRoute = async ({ redirect, cookies }) => {
         httpOnly: true,
         secure: false,
         sameSite: 'lax',
-        maxAge: 0 // expires the cookie immediately
-    });
+        maxAge: 0, // expires the cookie immediately
+    })
 
-    return redirect('/signin');
+    return redirect('/signin')
 }
